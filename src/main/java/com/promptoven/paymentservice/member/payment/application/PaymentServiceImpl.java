@@ -17,6 +17,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
@@ -28,15 +30,16 @@ public class PaymentServiceImpl implements PaymentService {
     private final String secretKey = Dotenv.load().get("TOSS_SECRET_KEY");
 
     @Override
-    public void test(String memberUuid, String productUuid) {
-        message.createPaymentMessage(KafkaMessageOutDto.toDto(memberUuid, productUuid));
+    public void test(String memberUuid, List<String> productUuid) {
+        Long testPaymentId = 123L;
+        message.createPaymentMessage(KafkaMessageOutDto.toDto(testPaymentId, memberUuid, productUuid));
     }
 
     @Override
     public void processPaymentCallback(PaymentCallbackRequestDto requestDto) {
 
         String paymentKey = requestDto.getPaymentKey();
-        String productUuid = requestDto.getProductUuid();
+        List<String> productUuid = requestDto.getProductUuid();
         String memberUuid = requestDto.getMemberUuid();
 
         // Toss Payments API에서 결제 상세 정보 조회
@@ -62,7 +65,6 @@ public class PaymentServiceImpl implements PaymentService {
         // 결제 정보 저장
         Payment payment = Payment.builder()
                 .memberUuid(memberUuid)
-                .productUuid(productUuid)
                 .methodId(methodId)
                 .paymentWay(paymentWay)
                 .approveNumber(paymentDetails.getApproveNumber())
@@ -70,9 +72,9 @@ public class PaymentServiceImpl implements PaymentService {
                 .approvedAt(paymentDetails.getApprovedAt())
                 .build();
 
-        paymentRepository.save(payment);
+        Payment savedPayment = paymentRepository.save(payment);
 
-        message.createPaymentMessage(KafkaMessageOutDto.toDto(memberUuid, productUuid));
+        message.createPaymentMessage(KafkaMessageOutDto.toDto(savedPayment.getPaymentId(), memberUuid, productUuid));
     }
 
     // 결제 수단에 따라 적절한 methodId를 반환하는 메서드

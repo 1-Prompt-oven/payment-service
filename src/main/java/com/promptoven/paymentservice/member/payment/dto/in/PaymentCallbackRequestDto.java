@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -12,7 +14,7 @@ public class PaymentCallbackRequestDto {
     private String paymentKey;
     private String orderId;
     private Integer amount;
-    private String productUuid;
+    private List<String> productUuid;
     private String memberUuid;
 
     public static PaymentCallbackRequestDto toDto(PaymentCallbackRequestVo vo) {
