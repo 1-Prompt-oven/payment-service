@@ -28,8 +28,8 @@ public class PaymentServiceImpl implements PaymentService {
     private final String secretKey = Dotenv.load().get("TOSS_SECRET_KEY");
 
     @Override
-    public void test(String productUuid) {
-        message.createPaymentMessage(KafkaMessageOutDto.toDto(productUuid));
+    public void test(String memberUuid, String productUuid) {
+        message.createPaymentMessage(KafkaMessageOutDto.toDto(memberUuid, productUuid));
     }
 
     @Override
@@ -72,7 +72,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         paymentRepository.save(payment);
 
-        message.createPaymentMessage(KafkaMessageOutDto.toDto(productUuid));
+        message.createPaymentMessage(KafkaMessageOutDto.toDto(memberUuid, productUuid));
     }
 
     // 결제 수단에 따라 적절한 methodId를 반환하는 메서드

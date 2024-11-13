@@ -6,5 +6,5 @@ public interface PaymentService {
 
     void processPaymentCallback(PaymentCallbackRequestDto paymentCallbackRequestDto);
 
-    void test(String productUuid);
+    void test(String memberUuid, String productUuid);
 }

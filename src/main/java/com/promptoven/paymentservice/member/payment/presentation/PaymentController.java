@@ -30,8 +30,8 @@ public class PaymentController {
 
     @Operation(summary = "kafka 테스트", description = "kafka 테스트")
     @PostMapping("/test")
-    public BaseResponse<Void> test(@RequestParam String productUuid) {
-        paymentService.test(productUuid);
+    public BaseResponse<Void> test(@RequestParam String memberUuid, String productUuid) {
+        paymentService.test(memberUuid, productUuid);
         return new BaseResponse<>();
     }
 }
