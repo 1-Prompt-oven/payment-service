@@ -4,6 +4,7 @@ import com.promptoven.paymentservice.common.domain.Payment;
 import com.promptoven.paymentservice.common.domain.PaymentWay;
 import com.promptoven.paymentservice.global.common.response.BaseResponseStatus;
 import com.promptoven.paymentservice.global.error.BaseException;
+import com.promptoven.paymentservice.member.payment.dto.out.KafkaMessageOutDto;
 import com.promptoven.paymentservice.member.payment.dto.out.PaymentDetailResponseDto;
 import com.promptoven.paymentservice.member.payment.infrastructure.PaymentRepository;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -21,11 +22,17 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
     private final RestTemplate restTemplate = new RestTemplate();
+    private final Message message;
 
     private final String secretKey = Dotenv.load().get("TOSS_SECRET_KEY");
 
     @Override
-    public void processPaymentCallback(String paymentKey, String orderId, Integer amount) {
+    public void test(String productUuid) {
+        message.createPaymentMessage(KafkaMessageOutDto.toDto(productUuid));
+    }
+
+    @Override
+    public void processPaymentCallback(String paymentKey, String orderId, Integer amount, String productUuid) {
         // Toss Payments API에서 결제 상세 정보 조회
         String url = "https://api.tosspayments.com/v1/payments/" + paymentKey;
 
@@ -55,6 +62,8 @@ public class PaymentServiceImpl implements PaymentService {
                 .build();
 
         paymentRepository.save(payment);
+
+        message.createPaymentMessage(KafkaMessageOutDto.toDto(productUuid));
     }
 
     // 결제 수단에 따라 적절한 methodId를 반환하는 메서드

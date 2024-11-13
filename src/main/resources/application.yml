@@ -16,3 +16,6 @@ spring:
     client-key: ${TOSS_CLIENT_KEY}
     secret-key: ${TOSS_SECRET_KEY}
     callback-url: "/api/payments/callback"
+
+  kafka:
+    bootstrap-servers: localhost:29092,localhost:39092,localhost:49092
