@@ -19,11 +19,18 @@ public class PaymentController {
     public BaseResponse<Void> handlePaymentCallback(
             @RequestParam String paymentKey,
             @RequestParam String orderId,
-            @RequestParam Integer amount) {
+            @RequestParam Integer amount,
+            @RequestParam String productUuid) {
 
         // 결제 상세 정보를 조회하고, 결제 내역 저장 로직 실행
-        paymentService.processPaymentCallback(paymentKey, orderId, amount);
+        paymentService.processPaymentCallback(paymentKey, orderId, amount, productUuid);
 
+        return new BaseResponse<>();
+    }
+
+    @PostMapping("/test")
+    public BaseResponse<Void> test(@RequestParam String productUuid) {
+        paymentService.test(productUuid);
         return new BaseResponse<>();
     }
 }
