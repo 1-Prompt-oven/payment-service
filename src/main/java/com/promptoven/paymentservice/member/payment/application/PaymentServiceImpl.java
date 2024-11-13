@@ -4,6 +4,7 @@ import com.promptoven.paymentservice.common.domain.Payment;
 import com.promptoven.paymentservice.common.domain.PaymentWay;
 import com.promptoven.paymentservice.global.common.response.BaseResponseStatus;
 import com.promptoven.paymentservice.global.error.BaseException;
+import com.promptoven.paymentservice.member.payment.dto.in.PaymentCallbackRequestDto;
 import com.promptoven.paymentservice.member.payment.dto.out.KafkaMessageOutDto;
 import com.promptoven.paymentservice.member.payment.dto.out.PaymentDetailResponseDto;
 import com.promptoven.paymentservice.member.payment.infrastructure.PaymentRepository;
@@ -27,12 +28,17 @@ public class PaymentServiceImpl implements PaymentService {
     private final String secretKey = Dotenv.load().get("TOSS_SECRET_KEY");
 
     @Override
-    public void test(String productUuid) {
-        message.createPaymentMessage(KafkaMessageOutDto.toDto(productUuid));
+    public void test(String memberUuid, String productUuid) {
+        message.createPaymentMessage(KafkaMessageOutDto.toDto(memberUuid, productUuid));
     }
 
     @Override
-    public void processPaymentCallback(String paymentKey, String orderId, Integer amount, String productUuid) {
+    public void processPaymentCallback(PaymentCallbackRequestDto requestDto) {
+
+        String paymentKey = requestDto.getPaymentKey();
+        String productUuid = requestDto.getProductUuid();
+        String memberUuid = requestDto.getMemberUuid();
+
         // Toss Payments API에서 결제 상세 정보 조회
         String url = "https://api.tosspayments.com/v1/payments/" + paymentKey;
 
@@ -55,15 +61,18 @@ public class PaymentServiceImpl implements PaymentService {
 
         // 결제 정보 저장
         Payment payment = Payment.builder()
+                .memberUuid(memberUuid)
+                .productUuid(productUuid)
                 .methodId(methodId)
                 .paymentWay(paymentWay)
                 .approveNumber(paymentDetails.getApproveNumber())
                 .amount(paymentDetails.getAmount())
+                .approvedAt(paymentDetails.getApprovedAt())
                 .build();
 
         paymentRepository.save(payment);
 
-        message.createPaymentMessage(KafkaMessageOutDto.toDto(productUuid));
+        message.createPaymentMessage(KafkaMessageOutDto.toDto(memberUuid, productUuid));
     }
 
     // 결제 수단에 따라 적절한 methodId를 반환하는 메서드

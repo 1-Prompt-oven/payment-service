@@ -1,8 +1,10 @@
 package com.promptoven.paymentservice.member.payment.application;
 
+import com.promptoven.paymentservice.member.payment.dto.in.PaymentCallbackRequestDto;
+
 public interface PaymentService {
 
-    void processPaymentCallback(String paymentKey, String orderId, Integer amount, String productUuid);
+    void processPaymentCallback(PaymentCallbackRequestDto paymentCallbackRequestDto);
 
-    void test(String productUuid);
+    void test(String memberUuid, String productUuid);
 }

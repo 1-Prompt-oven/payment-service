@@ -9,10 +9,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public class KafkaMessageOutDto {
 
+    private String memberUuid;
+
     private String productUuid;
 
-    public static KafkaMessageOutDto toDto(String productUuid) {
+    public static KafkaMessageOutDto toDto(String memberUuid, String productUuid) {
         return KafkaMessageOutDto.builder()
+                .memberUuid(memberUuid)
                 .productUuid(productUuid)
                 .build();
     }

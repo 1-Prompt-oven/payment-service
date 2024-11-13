@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.Comment;
 
+import java.time.LocalDateTime;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -16,6 +18,14 @@ public class Payment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "payment_id")
     private Long paymentId;
+
+    @Comment("회원 UUID")
+    @Column(nullable = false, length = 50)
+    private String memberUuid;
+
+    @Comment("상품 UUID")
+    @Column(nullable = false, length = 50)
+    private String productUuid;
 
     @Comment("결제수단 ID")
     @Column(nullable = false, length = 50)
@@ -33,14 +43,24 @@ public class Payment {
     @Column(nullable = false, length = 50)
     private String approveNumber;
 
+    @Comment("결제시간")
+    @Column(nullable = false)
+    private LocalDateTime approvedAt;
+
     @Builder
-    public Payment(String methodId,
+    public Payment(String memberUuid,
+                   String productUuid,
+                   String methodId,
                    PaymentWay paymentWay,
                    Integer amount,
-                   String approveNumber) {
+                   String approveNumber,
+                   LocalDateTime approvedAt) {
+        this.memberUuid = memberUuid;
+        this.productUuid = productUuid;
         this.methodId = methodId;
         this.paymentWay = paymentWay;
         this.amount = amount;
         this.approveNumber = approveNumber;
+        this.approvedAt = approvedAt;
     }
 }

@@ -2,35 +2,36 @@ package com.promptoven.paymentservice.member.payment.presentation;
 
 import com.promptoven.paymentservice.global.common.response.BaseResponse;
 import com.promptoven.paymentservice.member.payment.application.PaymentService;
+import com.promptoven.paymentservice.member.payment.dto.in.PaymentCallbackRequestDto;
+import com.promptoven.paymentservice.member.payment.vo.in.PaymentCallbackRequestVo;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/v1/payments")
 @RequiredArgsConstructor
+@Tag(name = "결제 API", description = "결제 관련 API endpoints")
 public class PaymentController {
 
     private final PaymentService paymentService;
 
+    @Operation(summary = "결제 콜백", description = "결제 콜백")
     @PostMapping("/callback")
-    public BaseResponse<Void> handlePaymentCallback(
-            @RequestParam String paymentKey,
-            @RequestParam String orderId,
-            @RequestParam Integer amount,
-            @RequestParam String productUuid) {
+    public BaseResponse<Void> handlePaymentCallback(@RequestBody PaymentCallbackRequestVo requestVo) {
 
-        // 결제 상세 정보를 조회하고, 결제 내역 저장 로직 실행
-        paymentService.processPaymentCallback(paymentKey, orderId, amount, productUuid);
+        PaymentCallbackRequestDto requestDto = PaymentCallbackRequestDto.toDto(requestVo);
+
+        paymentService.processPaymentCallback(requestDto);
 
         return new BaseResponse<>();
     }
 
+    @Operation(summary = "kafka 테스트", description = "kafka 테스트")
     @PostMapping("/test")
-    public BaseResponse<Void> test(@RequestParam String productUuid) {
-        paymentService.test(productUuid);
+    public BaseResponse<Void> test(@RequestParam String memberUuid, String productUuid) {
+        paymentService.test(memberUuid, productUuid);
         return new BaseResponse<>();
     }
 }
