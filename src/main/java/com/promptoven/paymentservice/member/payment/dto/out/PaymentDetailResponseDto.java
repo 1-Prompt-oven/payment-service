@@ -1,6 +1,5 @@
 package com.promptoven.paymentservice.member.payment.dto.out;
 
-import com.promptoven.paymentservice.common.domain.PaymentWay;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
