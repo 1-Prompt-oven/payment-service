@@ -13,7 +13,6 @@ spring:
       dialect: org.hibernate.dialect.MySQL8Dialect
 
   toss:
-    payments:
-      client-key: "test_ck_24xLea5zVA9AkL0v7M62VQAMYNwW"
-      secret-key: "test_sk_Z1aOwX7K8mzMQx924lXQ3yQxzvNP"
-      callback-url: "/api/payments/callback"
+    client-key: ${TOSS_CLIENT_KEY}
+    secret-key: ${TOSS_SECRET_KEY}
+    callback-url: "/api/payments/callback"
