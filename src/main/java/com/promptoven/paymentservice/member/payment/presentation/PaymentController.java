@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/v1/payments")
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class PaymentController {
 
     @Operation(summary = "kafka 테스트", description = "kafka 테스트")
     @PostMapping("/test")
-    public BaseResponse<Void> test(@RequestParam String memberUuid, String productUuid) {
+    public BaseResponse<Void> test(@RequestParam String memberUuid, List<String> productUuid) {
         paymentService.test(memberUuid, productUuid);
         return new BaseResponse<>();
     }

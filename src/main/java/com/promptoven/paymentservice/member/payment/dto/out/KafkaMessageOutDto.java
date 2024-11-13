@@ -4,17 +4,22 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 @Builder
 @AllArgsConstructor
 public class KafkaMessageOutDto {
 
+    private Long paymentId;
+
     private String memberUuid;
 
-    private String productUuid;
+    private List<String> productUuid;
 
-    public static KafkaMessageOutDto toDto(String memberUuid, String productUuid) {
+    public static KafkaMessageOutDto toDto(Long paymentId, String memberUuid, List<String> productUuid) {
         return KafkaMessageOutDto.builder()
+                .paymentId(paymentId)
                 .memberUuid(memberUuid)
                 .productUuid(productUuid)
                 .build();
