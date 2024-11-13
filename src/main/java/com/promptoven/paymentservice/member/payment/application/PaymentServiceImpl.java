@@ -62,6 +62,7 @@ public class PaymentServiceImpl implements PaymentService {
         // 결제 정보 저장
         Payment payment = Payment.builder()
                 .memberUuid(memberUuid)
+                .productUuid(productUuid)
                 .methodId(methodId)
                 .paymentWay(paymentWay)
                 .approveNumber(paymentDetails.getApproveNumber())

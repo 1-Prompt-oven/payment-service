@@ -23,6 +23,10 @@ public class Payment {
     @Column(nullable = false, length = 50)
     private String memberUuid;
 
+    @Comment("상품 UUID")
+    @Column(nullable = false, length = 50)
+    private String productUuid;
+
     @Comment("결제수단 ID")
     @Column(nullable = false, length = 50)
     private String methodId;
@@ -45,12 +49,14 @@ public class Payment {
 
     @Builder
     public Payment(String memberUuid,
+                   String productUuid,
                    String methodId,
                    PaymentWay paymentWay,
                    Integer amount,
                    String approveNumber,
                    LocalDateTime approvedAt) {
         this.memberUuid = memberUuid;
+        this.productUuid = productUuid;
         this.methodId = methodId;
         this.paymentWay = paymentWay;
         this.amount = amount;
