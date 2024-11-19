@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 public class KafkaMessageImpl implements Message {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
-    private static final String CREATE_TOPIC = "create_payment_event";
+    private static final String CREATE_TOPIC = "payment-create-event";
 
     @Override
     public void createPaymentMessage(KafkaMessageOutDto messageOutDto) {

@@ -15,13 +15,13 @@ public class KafkaMessageOutDto {
 
     private String memberUuid;
 
-    private List<String> productUuid;
+    private List<String> productUuids;
 
-    public static KafkaMessageOutDto toDto(Long paymentId, String memberUuid, List<String> productUuid) {
+    public static KafkaMessageOutDto toDto(Long paymentId, String memberUuid, List<String> productUuids) {
         return KafkaMessageOutDto.builder()
                 .paymentId(paymentId)
                 .memberUuid(memberUuid)
-                .productUuid(productUuid)
+                .productUuids(productUuids)
                 .build();
     }
 }
