@@ -11,13 +11,27 @@ spring:
   properties:
     hibernate:
       dialect: org.hibernate.dialect.MySQL8Dialect
-
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connectTimeout: 5000
+            readTimeout: 5000
+            loggerLevel: basic
   toss:
     client-key: ${TOSS_CLIENT_KEY}
     secret-key: ${TOSS_SECRET_KEY}
     callback-url: "/api/payments/callback"
 
   kafka:
-    text-bootstrap-servers: localhost:29092,localhost:39092,localhost:49092
+    text-bootstrap-servers: localhost:9092
+logging:
+  level:
+    org:
+      springframework:
+        web: DEBUG
+        cloud: DEBUG
 
-logging.level.org.springframework: DEBUG
+product-service:
+  url: http://localhost:8080
