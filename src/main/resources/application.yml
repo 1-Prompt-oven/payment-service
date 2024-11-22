@@ -19,3 +19,5 @@ spring:
 
   kafka:
     text-bootstrap-servers: localhost:29092,localhost:39092,localhost:49092
+
+logging.level.org.springframework: DEBUG

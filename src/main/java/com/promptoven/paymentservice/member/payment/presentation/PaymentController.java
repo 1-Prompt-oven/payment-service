@@ -3,6 +3,7 @@ package com.promptoven.paymentservice.member.payment.presentation;
 import com.promptoven.paymentservice.global.common.response.BaseResponse;
 import com.promptoven.paymentservice.member.payment.application.PaymentService;
 import com.promptoven.paymentservice.member.payment.dto.in.PaymentCallbackRequestDto;
+import com.promptoven.paymentservice.member.payment.dto.in.ProductResponseDto;
 import com.promptoven.paymentservice.member.payment.vo.in.PaymentCallbackRequestVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,5 +37,11 @@ public class PaymentController {
                                    @RequestParam List<String> productUuid) {
         paymentService.test(memberUuid, productUuid);
         return new BaseResponse<>();
+    }
+
+    @GetMapping("/product/seller/{productUUID}")
+    public BaseResponse<ProductResponseDto> getProductByUuid(@PathVariable("productUUID") String productUUID) {
+        ProductResponseDto productResponseDto = new ProductResponseDto("String", "String");
+        return new BaseResponse<>(productResponseDto);
     }
 }
