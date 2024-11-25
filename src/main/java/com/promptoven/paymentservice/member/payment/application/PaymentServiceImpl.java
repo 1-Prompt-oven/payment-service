@@ -52,7 +52,6 @@ public class PaymentServiceImpl implements PaymentService {
             }
             productSellerMap.put(productUuid, productDetails.getResult().getSellerUuid());
         }
-        productSellerMap.put("product2", "seller2");
 
         KafkaMessageOutDto kafkaMessageOutDto = KafkaMessageOutDto.toDto(testPaymentId, memberUuid, productUuids, productSellerMap);
         log.info("kafkaMessageOutDto: {}", kafkaMessageOutDto.getProductSellerMap());
