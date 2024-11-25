@@ -3,14 +3,17 @@ package com.promptoven.paymentservice.member.payment.presentation;
 import com.promptoven.paymentservice.global.common.response.BaseResponse;
 import com.promptoven.paymentservice.member.payment.application.PaymentService;
 import com.promptoven.paymentservice.member.payment.dto.in.PaymentCallbackRequestDto;
+import com.promptoven.paymentservice.member.payment.dto.in.ProductResponseDto;
 import com.promptoven.paymentservice.member.payment.vo.in.PaymentCallbackRequestVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/v1/payments")
 @RequiredArgsConstructor
@@ -36,5 +39,13 @@ public class PaymentController {
                                    @RequestParam List<String> productUuid) {
         paymentService.test(memberUuid, productUuid);
         return new BaseResponse<>();
+    }
+
+    @GetMapping("/product/seller/test/{productUUID}")
+    public BaseResponse<ProductResponseDto> getProductByUuid(@PathVariable("productUUID") String productUUID) {
+        log.info("productUUID by test: {}", productUUID);
+        ProductResponseDto productResponseDto = new ProductResponseDto("String");
+        log.info("productResponseDto: {}", productResponseDto.getSellerUuid());
+        return new BaseResponse<>(productResponseDto);
     }
 }

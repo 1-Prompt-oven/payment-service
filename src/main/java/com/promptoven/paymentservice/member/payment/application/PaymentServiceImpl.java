@@ -2,14 +2,17 @@ package com.promptoven.paymentservice.member.payment.application;
 
 import com.promptoven.paymentservice.common.domain.Payment;
 import com.promptoven.paymentservice.common.domain.PaymentWay;
+import com.promptoven.paymentservice.global.common.response.BaseResponse;
 import com.promptoven.paymentservice.global.common.response.BaseResponseStatus;
 import com.promptoven.paymentservice.global.error.BaseException;
 import com.promptoven.paymentservice.member.payment.dto.in.PaymentCallbackRequestDto;
+import com.promptoven.paymentservice.member.payment.dto.in.ProductResponseDto;
 import com.promptoven.paymentservice.member.payment.dto.out.KafkaMessageOutDto;
 import com.promptoven.paymentservice.member.payment.dto.out.PaymentDetailResponseDto;
 import com.promptoven.paymentservice.member.payment.infrastructure.PaymentRepository;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -17,11 +20,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
+
+    private final ProductFeignClient productFeignClient;
 
     private final PaymentRepository paymentRepository;
     private final RestTemplate restTemplate = new RestTemplate();
@@ -30,16 +38,33 @@ public class PaymentServiceImpl implements PaymentService {
     private final String secretKey = Dotenv.load().get("TOSS_SECRET_KEY");
 
     @Override
-    public void test(String memberUuid, List<String> productUuid) {
+    public void test(String memberUuid, List<String> productUuids) {
         Long testPaymentId = 123L;
-        message.createPaymentMessage(KafkaMessageOutDto.toDto(testPaymentId, memberUuid, productUuid));
+
+        // productUuids를 순회하며 sellerUuid 매핑
+        Map<String, String> productSellerMap = new HashMap<>();
+        for (String productUuid : productUuids) {
+            // Feign Client를 통해 각 productUuid에 대해 Product 정보를 조회
+            BaseResponse<ProductResponseDto> productDetails = productFeignClient.getProductByUuid(productUuid);
+            log.info("productDetails: {}", productDetails.getResult());
+            if (productDetails == null) {
+                throw new BaseException(BaseResponseStatus.NOT_FOUND_DATA);
+            }
+            productSellerMap.put(productUuid, productDetails.getResult().getSellerUuid());
+        }
+        productSellerMap.put("product2", "seller2");
+
+        KafkaMessageOutDto kafkaMessageOutDto = KafkaMessageOutDto.toDto(testPaymentId, memberUuid, productUuids, productSellerMap);
+        log.info("kafkaMessageOutDto: {}", kafkaMessageOutDto.getProductSellerMap());
+
+        message.createPaymentMessage(KafkaMessageOutDto.toDto(testPaymentId, memberUuid, productUuids, productSellerMap));
     }
 
     @Override
     public void processPaymentCallback(PaymentCallbackRequestDto requestDto) {
 
         String paymentKey = requestDto.getPaymentKey();
-        List<String> productUuid = requestDto.getProductUuid();
+        List<String> productUuids = requestDto.getProductUuids();
         String memberUuid = requestDto.getMemberUuid();
 
         // Toss Payments API에서 결제 상세 정보 조회
@@ -62,6 +87,17 @@ public class PaymentServiceImpl implements PaymentService {
         // 결제 수단에 따라 methodId 설정
         String methodId = resolveMethodId(paymentWay, paymentDetails);
 
+        // productUuids를 순회하며 sellerUuid 매핑
+        Map<String, String> productSellerMap = new HashMap<>();
+        for (String productUuid : productUuids) {
+            // Feign Client를 통해 각 productUuid에 대해 Product 정보를 조회
+            BaseResponse<ProductResponseDto> productDetails = productFeignClient.getProductByUuid(productUuid);
+            if (productDetails == null) {
+                throw new BaseException(BaseResponseStatus.NOT_FOUND_DATA);
+            }
+            productSellerMap.put(productUuid, productDetails.getResult().getSellerUuid());
+        }
+
         // 결제 정보 저장
         Payment payment = Payment.builder()
                 .memberUuid(memberUuid)
@@ -74,7 +110,15 @@ public class PaymentServiceImpl implements PaymentService {
 
         Payment savedPayment = paymentRepository.save(payment);
 
-        message.createPaymentMessage(KafkaMessageOutDto.toDto(savedPayment.getPaymentId(), memberUuid, productUuid));
+        // Kafka 메시지 생성 및 전송
+        message.createPaymentMessage(
+                KafkaMessageOutDto.toDto(
+                        savedPayment.getPaymentId(),
+                        memberUuid,
+                        productUuids,
+                        productSellerMap // productUuid와 sellerUuid 매핑 정보 포함
+                )
+        );
     }
 
     // 결제 수단에 따라 적절한 methodId를 반환하는 메서드
