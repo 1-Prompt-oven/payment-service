@@ -8,10 +8,12 @@ import com.promptoven.paymentservice.member.payment.vo.in.PaymentCallbackRequest
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/v1/payments")
 @RequiredArgsConstructor
@@ -39,9 +41,11 @@ public class PaymentController {
         return new BaseResponse<>();
     }
 
-    @GetMapping("/product/seller/{productUUID}")
+    @GetMapping("/product/seller/test/{productUUID}")
     public BaseResponse<ProductResponseDto> getProductByUuid(@PathVariable("productUUID") String productUUID) {
-        ProductResponseDto productResponseDto = new ProductResponseDto("String", "String");
+        log.info("productUUID by test: {}", productUUID);
+        ProductResponseDto productResponseDto = new ProductResponseDto("String");
+        log.info("productResponseDto: {}", productResponseDto.getSellerUuid());
         return new BaseResponse<>(productResponseDto);
     }
 }

@@ -2,6 +2,7 @@ package com.promptoven.paymentservice.member.payment.application;
 
 import com.promptoven.paymentservice.common.domain.Payment;
 import com.promptoven.paymentservice.common.domain.PaymentWay;
+import com.promptoven.paymentservice.global.common.response.BaseResponse;
 import com.promptoven.paymentservice.global.common.response.BaseResponseStatus;
 import com.promptoven.paymentservice.global.error.BaseException;
 import com.promptoven.paymentservice.member.payment.dto.in.PaymentCallbackRequestDto;
@@ -11,6 +12,7 @@ import com.promptoven.paymentservice.member.payment.dto.out.PaymentDetailRespons
 import com.promptoven.paymentservice.member.payment.infrastructure.PaymentRepository;
 import io.github.cdimascio.dotenv.Dotenv;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
@@ -42,12 +45,17 @@ public class PaymentServiceImpl implements PaymentService {
         Map<String, String> productSellerMap = new HashMap<>();
         for (String productUuid : productUuids) {
             // Feign Client를 통해 각 productUuid에 대해 Product 정보를 조회
-            ProductResponseDto productDetails = productFeignClient.getProductByUuid(productUuid);
+            BaseResponse<ProductResponseDto> productDetails = productFeignClient.getProductByUuid(productUuid);
+            log.info("productDetails: {}", productDetails.getResult());
             if (productDetails == null) {
                 throw new BaseException(BaseResponseStatus.NOT_FOUND_DATA);
             }
-            productSellerMap.put(productUuid, productDetails.getSellerUuid());
+            productSellerMap.put(productUuid, productDetails.getResult().getSellerUuid());
         }
+        productSellerMap.put("product2", "seller2");
+
+        KafkaMessageOutDto kafkaMessageOutDto = KafkaMessageOutDto.toDto(testPaymentId, memberUuid, productUuids, productSellerMap);
+        log.info("kafkaMessageOutDto: {}", kafkaMessageOutDto.getProductSellerMap());
 
         message.createPaymentMessage(KafkaMessageOutDto.toDto(testPaymentId, memberUuid, productUuids, productSellerMap));
     }
@@ -83,11 +91,11 @@ public class PaymentServiceImpl implements PaymentService {
         Map<String, String> productSellerMap = new HashMap<>();
         for (String productUuid : productUuids) {
             // Feign Client를 통해 각 productUuid에 대해 Product 정보를 조회
-            ProductResponseDto productDetails = productFeignClient.getProductByUuid(productUuid);
+            BaseResponse<ProductResponseDto> productDetails = productFeignClient.getProductByUuid(productUuid);
             if (productDetails == null) {
                 throw new BaseException(BaseResponseStatus.NOT_FOUND_DATA);
             }
-            productSellerMap.put(productUuid, productDetails.getSellerUuid());
+            productSellerMap.put(productUuid, productDetails.getResult().getSellerUuid());
         }
 
         // 결제 정보 저장
