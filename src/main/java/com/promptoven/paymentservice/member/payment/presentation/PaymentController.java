@@ -24,7 +24,7 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-    @Operation(summary = "결제 콜백", description = "결제 콜백")
+    @Operation(summary = "상품 결제 콜백", description = "상품 결제 콜백")
     @PostMapping("/callback")
     public BaseResponse<Void> handlePaymentCallback(@RequestBody PaymentCallbackRequestVo requestVo) {
 
@@ -45,7 +45,7 @@ public class PaymentController {
 
     }
 
-    @Operation(summary = "kafka 테스트", description = "kafka 테스트")
+    @Operation(summary = "상품 결제 테스트", description = "상품 결제 테스트")
     @PostMapping("/test")
     public BaseResponse<Void> test(@RequestParam String memberUuid,
                                    @RequestParam List<String> productUuid) {
@@ -61,6 +61,7 @@ public class PaymentController {
         return new BaseResponse<>();
     }
 
+    @Operation(summary = "Feign Client 테스트 API", description = "Feign Client 테스트 API")
     @GetMapping("/product/seller/test/{productUUID}")
     public BaseResponse<ProductResponseDto> getProductByUuid(@PathVariable("productUUID") String productUUID) {
         log.info("productUUID by test: {}", productUUID);
