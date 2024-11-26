@@ -24,7 +24,12 @@ public class KafkaTopicConfig {
     }
 
     @Bean
-    public NewTopic myTopic() {
+    public NewTopic createPaymentTopic() {
         return new NewTopic("payment-create-event", 5, (short) 2); // 파티션 5개, 복제본 2개
+    }
+
+    @Bean
+    public NewTopic createCookiePaymentTopic() {
+        return new NewTopic("payment-cookie-create-event", 5, (short) 2); // 파티션 3개, 복제본 2개
     }
 }
