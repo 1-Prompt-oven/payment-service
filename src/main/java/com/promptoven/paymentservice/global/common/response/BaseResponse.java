@@ -1,7 +1,6 @@
 package com.promptoven.paymentservice.global.common.response;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 
 import static com.promptoven.paymentservice.global.common.response.BaseResponseStatus.SUCCESS;
 

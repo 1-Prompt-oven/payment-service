@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
@@ -40,6 +41,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final String secretKey = Dotenv.load().get("TOSS_SECRET_KEY");
 
+    @Transactional
     @Override
     public void test(String memberUuid, List<String> productUuids) {
         Long testPaymentId = 123L;
@@ -62,6 +64,7 @@ public class PaymentServiceImpl implements PaymentService {
         message.createPaymentMessage(KafkaMessageOutDto.toDto(testPaymentId, memberUuid, productUuids, productSellerMap));
     }
 
+    @Transactional
     @Override
     public void processPaymentCallback(PaymentCallbackRequestDto requestDto) {
 
@@ -123,6 +126,7 @@ public class PaymentServiceImpl implements PaymentService {
         );
     }
 
+    @Transactional
     @Override
     public void testCookiePayment(String memberUuid, Integer cookieAmount) {
         String testPaymentKey = "test-payment-key"; // 테스트용 Payment Key
@@ -168,6 +172,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     // 쿠키 결제 로직
+    @Transactional
     @Override
     public void processCookiePaymentCallback(PaymentCookieRequestDto requestDto) {
 
