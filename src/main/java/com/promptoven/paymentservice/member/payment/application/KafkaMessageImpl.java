@@ -4,6 +4,7 @@ import com.promptoven.paymentservice.member.payment.dto.out.KafkaCookieMessageOu
 import com.promptoven.paymentservice.member.payment.dto.out.KafkaMessageOutDto;
 import lombok.RequiredArgsConstructor;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
@@ -12,8 +13,12 @@ import org.springframework.stereotype.Component;
 public class KafkaMessageImpl implements Message {
 
     private final KafkaTemplate<String, Object> kafkaTemplate;
-    private static final String CREATE_TOPIC = "payment-create-event";
-    private static final String CREATE_COOKIE_TOPIC = "payment-cookie-create-event";
+
+    @Value("${payment-create-event}")
+    private String CREATE_TOPIC;
+
+    @Value("${payment-cookie-create-event}")
+    private String CREATE_COOKIE_TOPIC;
 
     @Override
     public void createPaymentMessage(KafkaMessageOutDto messageOutDto) {
