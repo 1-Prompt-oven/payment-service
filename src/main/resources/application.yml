@@ -55,9 +55,6 @@ spring:
     secret-key: ${TOSS_SECRET_KEY}
     callback-url: "/api/payments/callback"
 
-server:
-  port: 8082
-
 # prod 설정
 ---
 spring:

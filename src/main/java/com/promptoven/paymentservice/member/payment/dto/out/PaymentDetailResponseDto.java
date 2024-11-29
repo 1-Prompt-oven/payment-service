@@ -1,15 +1,14 @@
 package com.promptoven.paymentservice.member.payment.dto.out;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Getter
 @Builder
-@AllArgsConstructor
+@Getter
 public class PaymentDetailResponseDto {
+
     private String paymentKey; // 결제 고유 키
     private String orderId; // 주문 ID
     private Integer amount; // 결제 금액

@@ -7,9 +7,9 @@ import lombok.Getter;
 @Getter
 public class PaymentCookieRequestVo {
 
-    private String paymentKey;
-    private String orderId;
-    private Integer amount;
-    private Integer cookieAmount;
-    private String memberUuid;
+    private final String paymentKey;
+    private final String orderId;
+    private final Integer amount;
+    private final Integer cookieAmount;
+    private final String memberUuid;
 }
