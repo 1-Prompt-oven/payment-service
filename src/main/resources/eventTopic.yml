@@ -1,0 +1,3 @@
+# Payment Service Produced
+payment-create-event: payment-create-event # {paymentId : Long, memberUUID : String, productUUID : List<String>, productSellerMap : Map<String, String>}
+payment-cookie-create-event: payment-cookie-create-event # {paymentId : Long, memberUUID : String, cookieAmount : Integer, approveAt : LocalDateTime}
