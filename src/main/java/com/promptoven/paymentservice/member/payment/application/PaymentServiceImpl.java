@@ -9,6 +9,7 @@ import com.promptoven.paymentservice.member.payment.dto.in.PaymentProductRequest
 import com.promptoven.paymentservice.member.payment.dto.in.ProductResponseDto;
 import com.promptoven.paymentservice.member.payment.dto.out.KafkaCookieMessageOutDto;
 import com.promptoven.paymentservice.member.payment.dto.out.KafkaMessageOutDto;
+import com.promptoven.paymentservice.member.payment.dto.out.PaymentListResponseDto;
 import com.promptoven.paymentservice.member.payment.infrastructure.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -73,6 +76,17 @@ public class PaymentServiceImpl implements PaymentService {
         );
     }
 
+    @Transactional(readOnly = true)
+    @Override
+    public List<PaymentListResponseDto> getPaymentHistory(String memberUuid) {
+
+        List<Payment> payments = paymentRepository.findAllByMemberUuid(memberUuid);
+        return payments.stream()
+                .map(PaymentListResponseDto::fromEntity
+                )
+                .collect(Collectors.toList());
+    }
+    
     //    @Transactional
     //    @Override
     //    public void test(String memberUuid, List<String> productUuids) {

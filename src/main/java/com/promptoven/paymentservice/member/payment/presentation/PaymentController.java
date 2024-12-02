@@ -5,13 +5,17 @@ import com.promptoven.paymentservice.member.payment.application.PaymentService;
 import com.promptoven.paymentservice.member.payment.dto.in.PaymentCookieRequestDto;
 import com.promptoven.paymentservice.member.payment.dto.in.PaymentProductRequestDto;
 import com.promptoven.paymentservice.member.payment.dto.in.ProductResponseDto;
+import com.promptoven.paymentservice.member.payment.dto.out.PaymentListResponseDto;
 import com.promptoven.paymentservice.member.payment.vo.in.PaymentCookieRequestVo;
 import com.promptoven.paymentservice.member.payment.vo.in.PaymentProductRequestVo;
+import com.promptoven.paymentservice.member.payment.vo.out.PaymentListResponseVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -38,6 +42,15 @@ public class PaymentController {
         paymentService.paymentCookie(PaymentCookieRequestDto.toDto(requestVo));
 
         return new BaseResponse<>();
+    }
+
+    @Operation(summary = "결제 내역 조회", description = "결제 내역 조회")
+    @GetMapping("/{memberUuid}")
+    public BaseResponse<List<PaymentListResponseVo>> getPaymentHistory(@PathVariable("memberUuid") String memberUuid) {
+        List<PaymentListResponseDto> paymentListResponseDtos = paymentService.getPaymentHistory(memberUuid);
+        return new BaseResponse<>(paymentListResponseDtos.stream()
+                .map(PaymentListResponseDto::toVo)
+                .toList());
     }
 
     //    @Operation(summary = "상품 결제 콜백", description = "상품 결제 콜백")
