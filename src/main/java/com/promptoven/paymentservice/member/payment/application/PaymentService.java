@@ -1,17 +1,19 @@
 package com.promptoven.paymentservice.member.payment.application;
 
-import com.promptoven.paymentservice.member.payment.dto.in.PaymentCallbackRequestDto;
 import com.promptoven.paymentservice.member.payment.dto.in.PaymentCookieRequestDto;
-
-import java.util.List;
+import com.promptoven.paymentservice.member.payment.dto.in.PaymentProductRequestDto;
 
 public interface PaymentService {
 
-    void processPaymentCallback(PaymentCallbackRequestDto paymentCallbackRequestDto);
+    void paymentProduct(PaymentProductRequestDto paymentProductRequestDto);
 
-    void processCookiePaymentCallback(PaymentCookieRequestDto requestDto);
+    void paymentCookie(PaymentCookieRequestDto paymentCookieRequestDto);
 
-    void test(String memberUuid, List<String> productUuid);
-
-    void testCookiePayment(String memberUuid, Integer cookieAmount);
+    //    void processPaymentCallback(PaymentCallbackRequestDto paymentCallbackRequestDto);
+    //
+    //    void processCookiePaymentCallback(PaymentCookieRequestDto requestDto);
+    //
+    //    void test(String memberUuid, List<String> productUuid);
+    //
+    //    void testCookiePayment(String memberUuid, Integer cookieAmount);
 }

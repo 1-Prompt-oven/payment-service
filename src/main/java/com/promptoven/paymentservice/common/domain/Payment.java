@@ -23,38 +23,49 @@ public class Payment {
     @Column(nullable = false, length = 50)
     private String memberUuid;
 
-    @Comment("결제수단 ID")
-    @Column(nullable = false, length = 50)
-    private String methodId;
-
-    @Comment("결제수단")
-    @Column(nullable = false, length = 50)
-    private PaymentWay paymentWay;
-
     @Comment("결제금액")
     @Column(nullable = false)
-    private Integer amount;
+    private Integer totalAmount;
 
-    @Comment("승인번호")
+    @Comment("결제 메시지")
+    @Column(nullable = false, length = 100)
+    private String message;
+
+    @Comment("주문 ID")
     @Column(nullable = false, length = 50)
-    private String approveNumber;
+    private String orderId;
+
+    @Comment("주문명")
+    @Column(nullable = false, length = 100)
+    private String orderName;
+
+    @Comment("결제 수단")
+    @Column(nullable = false)
+    private String paymentMethod;
+
+    @Comment("결제 유형")
+    @Column(nullable = false, length = 50)
+    private String paymentWay;
+
+    @Comment("요청시간")
+    @Column(nullable = false, length = 50)
+    private LocalDateTime requestedAt;
 
     @Comment("결제시간")
     @Column(nullable = false)
     private LocalDateTime approvedAt;
 
     @Builder
-    public Payment(String memberUuid,
-                   String methodId,
-                   PaymentWay paymentWay,
-                   Integer amount,
-                   String approveNumber,
-                   LocalDateTime approvedAt) {
+    public Payment(Long paymentId, String memberUuid, Integer totalAmount, String message, String orderId, String orderName, String paymentMethod, String paymentWay, LocalDateTime requestedAt, LocalDateTime approvedAt) {
+        this.paymentId = paymentId;
         this.memberUuid = memberUuid;
-        this.methodId = methodId;
+        this.totalAmount = totalAmount;
+        this.message = message;
+        this.orderId = orderId;
+        this.orderName = orderName;
+        this.paymentMethod = paymentMethod;
         this.paymentWay = paymentWay;
-        this.amount = amount;
-        this.approveNumber = approveNumber;
+        this.requestedAt = requestedAt;
         this.approvedAt = approvedAt;
     }
 }
