@@ -45,12 +45,21 @@ public class PaymentController {
     }
 
     @Operation(summary = "결제 내역 조회", description = "결제 내역 조회")
-    @GetMapping("/{memberUuid}")
+    @GetMapping("/list/{memberUuid}")
     public BaseResponse<List<PaymentListResponseVo>> getPaymentHistory(@PathVariable("memberUuid") String memberUuid) {
-        List<PaymentListResponseDto> paymentListResponseDtos = paymentService.getPaymentHistory(memberUuid);
+
+        List<PaymentListResponseDto> paymentListResponseDtos = paymentService.getPaymentHistoryList(memberUuid);
+
         return new BaseResponse<>(paymentListResponseDtos.stream()
                 .map(PaymentListResponseDto::toVo)
                 .toList());
+    }
+
+    @Operation(summary = "결제 내역 단 건 조회", description = "결제 내역 단 건 조회")
+    @GetMapping("/{paymentId}")
+    public BaseResponse<PaymentListResponseVo> getPaymentHistory(@PathVariable("paymentId") Long paymentId) {
+
+        return new BaseResponse<>(PaymentListResponseDto.toVo(paymentService.getPaymentHistory(paymentId)));
     }
 
     //    @Operation(summary = "상품 결제 콜백", description = "상품 결제 콜백")

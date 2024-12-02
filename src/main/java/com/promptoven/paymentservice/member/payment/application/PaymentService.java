@@ -12,7 +12,9 @@ public interface PaymentService {
 
     void paymentCookie(PaymentCookieRequestDto paymentCookieRequestDto);
 
-    List<PaymentListResponseDto> getPaymentHistory(String memberUuid);
+    List<PaymentListResponseDto> getPaymentHistoryList(String memberUuid);
+
+    PaymentListResponseDto getPaymentHistory(Long paymentId);
 
     //    void processPaymentCallback(PaymentCallbackRequestDto paymentCallbackRequestDto);
     //

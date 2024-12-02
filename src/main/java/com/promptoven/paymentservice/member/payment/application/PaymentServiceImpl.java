@@ -78,7 +78,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Transactional(readOnly = true)
     @Override
-    public List<PaymentListResponseDto> getPaymentHistory(String memberUuid) {
+    public List<PaymentListResponseDto> getPaymentHistoryList(String memberUuid) {
 
         List<Payment> payments = paymentRepository.findAllByMemberUuid(memberUuid);
         return payments.stream()
@@ -86,7 +86,15 @@ public class PaymentServiceImpl implements PaymentService {
                 )
                 .collect(Collectors.toList());
     }
-    
+
+    @Transactional(readOnly = true)
+    @Override
+    public PaymentListResponseDto getPaymentHistory(Long paymentId) {
+        Payment payment = paymentRepository.findById(paymentId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_DATA));
+        return PaymentListResponseDto.fromEntity(payment);
+    }
+
     //    @Transactional
     //    @Override
     //    public void test(String memberUuid, List<String> productUuids) {
