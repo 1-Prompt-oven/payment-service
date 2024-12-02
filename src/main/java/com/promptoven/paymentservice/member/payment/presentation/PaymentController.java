@@ -2,11 +2,13 @@ package com.promptoven.paymentservice.member.payment.presentation;
 
 import com.promptoven.paymentservice.global.common.response.BaseResponse;
 import com.promptoven.paymentservice.member.payment.application.PaymentService;
-import com.promptoven.paymentservice.member.payment.dto.in.PaymentCallbackRequestDto;
 import com.promptoven.paymentservice.member.payment.dto.in.PaymentCookieRequestDto;
+import com.promptoven.paymentservice.member.payment.dto.in.PaymentProductRequestDto;
 import com.promptoven.paymentservice.member.payment.dto.in.ProductResponseDto;
-import com.promptoven.paymentservice.member.payment.vo.in.PaymentCallbackRequestVo;
+import com.promptoven.paymentservice.member.payment.dto.out.PaymentListResponseDto;
 import com.promptoven.paymentservice.member.payment.vo.in.PaymentCookieRequestVo;
+import com.promptoven.paymentservice.member.payment.vo.in.PaymentProductRequestVo;
+import com.promptoven.paymentservice.member.payment.vo.out.PaymentListResponseVo;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -24,42 +26,78 @@ public class PaymentController {
 
     private final PaymentService paymentService;
 
-    @Operation(summary = "상품 결제 콜백", description = "상품 결제 콜백")
-    @PostMapping("/callback")
-    public BaseResponse<Void> handlePaymentCallback(@RequestBody PaymentCallbackRequestVo requestVo) {
+    @Operation(summary = "상품 결제", description = "상품 결제")
+    @PostMapping("/product")
+    public BaseResponse<Void> paymentProduct(@RequestBody PaymentProductRequestVo requestVo) {
 
-        PaymentCallbackRequestDto requestDto = PaymentCallbackRequestDto.toDto(requestVo);
-
-        paymentService.processPaymentCallback(requestDto);
+        paymentService.paymentProduct(PaymentProductRequestDto.toDto(requestVo));
 
         return new BaseResponse<>();
     }
 
-    @Operation(summary = "쿠키 결제 콜백", description = "쿠키 결제 콜백")
-    @PostMapping("/cookie/callback")
-    public BaseResponse<Void> handleCookiePaymentCallback(@RequestBody PaymentCookieRequestVo requestVo) {
+    @Operation(summary = "쿠키 결제", description = "쿠키 결제")
+    @PostMapping("/cookie")
+    public BaseResponse<Void> paymentCookie(@RequestBody PaymentCookieRequestVo requestVo) {
 
-        paymentService.processCookiePaymentCallback(PaymentCookieRequestDto.toDto(requestVo));
+        paymentService.paymentCookie(PaymentCookieRequestDto.toDto(requestVo));
 
-        return new BaseResponse<>();
-
-    }
-
-    @Operation(summary = "상품 결제 테스트", description = "상품 결제 테스트")
-    @PostMapping("/test")
-    public BaseResponse<Void> test(@RequestParam String memberUuid,
-                                   @RequestParam List<String> productUuid) {
-        paymentService.test(memberUuid, productUuid);
         return new BaseResponse<>();
     }
 
-    @Operation(summary = "쿠키 결제 테스트", description = "쿠키 결제 테스트")
-    @PostMapping("/cookie/test")
-    public BaseResponse<Void> testCookiePayment(@RequestParam String memberUuid,
-                                                @RequestParam Integer cookieAmount) {
-        paymentService.testCookiePayment(memberUuid, cookieAmount);
-        return new BaseResponse<>();
+    @Operation(summary = "결제 내역 조회", description = "결제 내역 조회")
+    @GetMapping("/list/{memberUuid}")
+    public BaseResponse<List<PaymentListResponseVo>> getPaymentHistory(@PathVariable("memberUuid") String memberUuid) {
+
+        List<PaymentListResponseDto> paymentListResponseDtos = paymentService.getPaymentHistoryList(memberUuid);
+
+        return new BaseResponse<>(paymentListResponseDtos.stream()
+                .map(PaymentListResponseDto::toVo)
+                .toList());
     }
+
+    @Operation(summary = "결제 내역 단 건 조회", description = "결제 내역 단 건 조회")
+    @GetMapping("/{paymentId}")
+    public BaseResponse<PaymentListResponseVo> getPaymentHistory(@PathVariable("paymentId") Long paymentId) {
+
+        return new BaseResponse<>(PaymentListResponseDto.toVo(paymentService.getPaymentHistory(paymentId)));
+    }
+
+    //    @Operation(summary = "상품 결제 콜백", description = "상품 결제 콜백")
+    //    @PostMapping("/callback")
+    //    public BaseResponse<Void> handlePaymentCallback(@RequestBody PaymentCallbackRequestVo requestVo) {
+    //
+    //        PaymentCallbackRequestDto requestDto = PaymentCallbackRequestDto.toDto(requestVo);
+    //
+    //        paymentService.processPaymentCallback(requestDto);
+    //
+    //        return new BaseResponse<>();
+    //    }
+    //
+    //    @Operation(summary = "쿠키 결제 콜백", description = "쿠키 결제 콜백")
+    //    @PostMapping("/cookie/callback")
+    //    public BaseResponse<Void> handleCookiePaymentCallback(@RequestBody PaymentCookieRequestVo requestVo) {
+    //
+    //        paymentService.processCookiePaymentCallback(PaymentCookieRequestDto.toDto(requestVo));
+    //
+    //        return new BaseResponse<>();
+    //
+    //    }
+    //
+    //    @Operation(summary = "상품 결제 테스트", description = "상품 결제 테스트")
+    //    @PostMapping("/test")
+    //    public BaseResponse<Void> test(@RequestParam String memberUuid,
+    //                                   @RequestParam List<String> productUuid) {
+    //        paymentService.test(memberUuid, productUuid);
+    //        return new BaseResponse<>();
+    //    }
+    //
+    //    @Operation(summary = "쿠키 결제 테스트", description = "쿠키 결제 테스트")
+    //    @PostMapping("/cookie/test")
+    //    public BaseResponse<Void> testCookiePayment(@RequestParam String memberUuid,
+    //                                                @RequestParam Integer cookieAmount) {
+    //        paymentService.testCookiePayment(memberUuid, cookieAmount);
+    //        return new BaseResponse<>();
+    //    }
 
     @Operation(summary = "Feign Client 테스트 API", description = "Feign Client 테스트 API")
     @GetMapping("/product/seller/test/{productUUID}")

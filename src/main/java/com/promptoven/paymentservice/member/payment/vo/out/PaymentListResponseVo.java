@@ -1,4 +1,4 @@
-package com.promptoven.paymentservice.member.payment.vo.in;
+package com.promptoven.paymentservice.member.payment.vo.out;
 
 import lombok.Builder;
 import lombok.Getter;
@@ -7,10 +7,10 @@ import java.time.LocalDateTime;
 
 @Builder
 @Getter
-public class PaymentCookieRequestVo {
+public class PaymentListResponseVo {
 
+    private final Long paymentId;
     private final String memberUuid;
-    private final Integer cookieAmount;
     private final Integer totalAmount;
     private final String message;
     private final String orderId;

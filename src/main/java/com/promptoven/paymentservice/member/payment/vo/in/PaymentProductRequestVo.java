@@ -4,13 +4,14 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Getter
-public class PaymentCookieRequestVo {
+public class PaymentProductRequestVo {
 
     private final String memberUuid;
-    private final Integer cookieAmount;
+    private final List<String> purchaseList;
     private final Integer totalAmount;
     private final String message;
     private final String orderId;

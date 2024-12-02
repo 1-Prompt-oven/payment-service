@@ -1,18 +1,19 @@
 package com.promptoven.paymentservice.member.payment.dto.in;
 
 import com.promptoven.paymentservice.common.domain.Payment;
-import com.promptoven.paymentservice.member.payment.vo.in.PaymentCookieRequestVo;
+import com.promptoven.paymentservice.member.payment.vo.in.PaymentProductRequestVo;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Builder
 @Getter
-public class PaymentCookieRequestDto {
+public class PaymentProductRequestDto {
 
     private String memberUuid;
-    private Integer cookieAmount;
+    private List<String> purchaseList;
     private Integer totalAmount;
     private String message;
     private String orderId;
@@ -22,10 +23,10 @@ public class PaymentCookieRequestDto {
     private LocalDateTime requestedAt;
     private LocalDateTime approvedAt;
 
-    public static PaymentCookieRequestDto toDto(PaymentCookieRequestVo vo) {
-        return PaymentCookieRequestDto.builder()
+    public static PaymentProductRequestDto toDto(PaymentProductRequestVo vo) {
+        return PaymentProductRequestDto.builder()
                 .memberUuid(vo.getMemberUuid())
-                .cookieAmount(vo.getCookieAmount())
+                .purchaseList(vo.getPurchaseList())
                 .totalAmount(vo.getTotalAmount())
                 .message(vo.getMessage())
                 .orderId(vo.getOrderId())
@@ -37,7 +38,7 @@ public class PaymentCookieRequestDto {
                 .build();
     }
 
-    public static Payment toEntity(PaymentCookieRequestDto dto) {
+    public static Payment toEntity(PaymentProductRequestDto dto) {
         return Payment.builder()
                 .memberUuid(dto.getMemberUuid())
                 .totalAmount(dto.getTotalAmount())
