@@ -11,6 +11,8 @@ import java.time.LocalDateTime;
 
 @Getter
 @Entity
+@Table(name = "payment", indexes = {
+        @Index(name = "idx_payment_member_uuid_approved_at", columnList = "member_uuid, approved_at DESC")})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Payment {
 
