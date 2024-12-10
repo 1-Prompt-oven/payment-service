@@ -9,6 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 @FeignClient(name = "product-service", url = "https://api.promptoven.shop")
 public interface ProductFeignClient {
 
-    @GetMapping("/v1/product/{productUUID}/seller")
+    @GetMapping("/v1/product/{productUuid}/seller")
     BaseResponse<ProductResponseDto> getProductByUuid(@PathVariable("productUUID") String productUUID);
 }
