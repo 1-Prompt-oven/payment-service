@@ -32,8 +32,8 @@ public class PaymentCookieRequestDto {
                 .orderName(vo.getOrderName())
                 .paymentMethod(vo.getPaymentMethod())
                 .paymentWay(vo.getPaymentWay())
-                .requestedAt(vo.getRequestedAt())
-                .approvedAt(vo.getApprovedAt())
+                .requestedAt(LocalDateTime.now())
+                .approvedAt(LocalDateTime.now())
                 .build();
     }
 
